@@ -5,8 +5,8 @@ services:
     container_name: namenode
     restart: always
     ports:
-      - 9870:9870   # Hadoop 3 Web UI (remplace le port 50070 de Hadoop 2)
-      - 9000:9000
+      - "9870:9870"   # Hadoop 3 Web UI
+      - "9000:9000"
     volumes:
       - hadoop_namenode:/hadoop/dfs/name
     environment:
@@ -26,8 +26,9 @@ services:
     env_file:
       - ./hadoop.env
     ports:
-      - 9864:9864   # Hadoop 3 DataNode Web UI (remplace 50075)
+      - "9864:9864"   # Hadoop 3 DataNode Web UI
     profiles: ["hdfs"]
+
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
@@ -37,8 +38,9 @@ services:
     env_file:
       - ./hadoop.env
     ports:
-      - 8088:8088
+      - "8088:8088"
     profiles: ["yarn"]
+
   nodemanager1:
     build: ./nodemanager/
     container_name: nodemanager
@@ -48,8 +50,10 @@ services:
     env_file:
       - ./hadoop.env
     ports:
-      - 8042:8042
+      - "8042:8042"
     profiles: ["yarn"]
+    volumes:
+      - ./code:/code
 
   historyserver:
     image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
@@ -62,9 +66,8 @@ services:
     env_file:
       - ./hadoop.env
     ports:
-      - 8188:8188
+      - "8188:8188"
     profiles: ["yarn"]
-
 
   hive-metastore:
     image: bde2020/hive:2.3.2-postgresql-metastore
@@ -76,7 +79,7 @@ services:
     environment:
       SERVICE_PRECONDITION: "namenode:9870 datanode:9864 hive-metastore-postgresql:5432"
     ports:
-      - 9083:9083
+      - "9083:9083"
     profiles: ["hive"]
 
   hive-server:
@@ -89,7 +92,7 @@ services:
       HIVE_CORE_CONF_javax_jdo_option_ConnectionURL: "jdbc:postgresql://hive-metastore/metastore"
       SERVICE_PRECONDITION: "hive-metastore:9083"
     ports:
-      - 10000:10000
+      - "10000:10000"
     profiles: ["hive"]
 
   hive-metastore-postgresql:
